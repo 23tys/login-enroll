@@ -7,12 +7,9 @@
 
 		<el-tree @current-change="handid" :titleid="titleid" class="filter-tree" :data="data" ref="tree">
 		</el-tree>
-		<div class="mask" v-if="kan">
-			<div class="open" v-if="seen">
-				<el-button @click="close" class="el-icon-circle-close x"></el-button>
-				<d-player ref="player" id="player" :options="options"></d-player>
-			</div>
-		</div>
+		<div class="el-icon-close x" v-if="close" @click="closee"></div>
+		<div ref="player" id="player" v-if="close"></div>
+		
 		<el-table :data="tableData" style="width: 83.5%;float: right;"
 			:default-sort="{prop: 'date', order: 'descending'}">
 			<el-table-column prop="id" label="编号" sortable></el-table-column>
@@ -23,8 +20,8 @@
 			<el-table-column prop="create_time" label="创建时间" sortable></el-table-column>
 			<el-table-column prop="update_time" label="更新日期" sortable></el-table-column>
 			<el-table-column label="操作"><template #default="scope">
-					<el-button size="mini" type="success" @click="open">播放</el-button>
-					
+					<el-button size="mini" type="success" @click="open(scope.$index, scope.row)">播放</el-button>
+
 					<el-button size="mini" type="info" @click="handleEdit(scope.$index, scope.row)"
 						v-loading.fullscreen.lock="fullscreenLoading">编辑</el-button>
 
@@ -53,7 +50,7 @@
 </template>
 <script>
 	import Add from './Add';
-	// import dplayer from 'dplayer';
+	import DPlayer from 'dplayer'
 	export default {
 		name: "Title",
 		components: {
@@ -61,13 +58,7 @@
 		},
 		data() {
 			return {
-				options:{
-					container:document.getElementById("dplayer"),
-					mutex:false,
-					
-				},
-				seen:false,
-				kan:false,
+				close:false,
 				data: [],
 				defaultProps: {
 					children: 'children',
@@ -101,13 +92,20 @@
 			this.rerenderTableDatas();
 		},
 		methods: {
-			open(){
-				this.seen = true
-				this.kan = true
+			closee(){
+				this.close = false
 			},
-			close(){
-				this.seen = false
-				this.kan = false
+			open(index,row) {
+				this.close = true
+				let newtvideo = this.tableData[index].mp4_url; 
+				let newvideo = newtvideo.indexOf('.');
+				let newbideos = newtvideo.slice(0,newvideo)
+				const dp = new DPlayer({
+					container: this.$refs.player,
+					video: {
+						url: `http://81.68.121.52:9000/api/videoplay?path=${newbideos}`
+					}
+				})
 			},
 			format(row, column, cellValue, index) {
 				if (cellValue == '1') {
@@ -120,6 +118,7 @@
 				console.log(a, b)
 				if (b.level == 2) {
 					this.titleid = a.id
+					this.values = a.id
 				}
 				this.rerenderTableData();
 			},
@@ -151,7 +150,6 @@
 									label: item1.name
 								})
 							})
-
 							this.data.push({
 								id: datas[index].id,
 								label: datas[index].name,
@@ -190,7 +188,6 @@
 				this.$emit('nameindex', newtable);
 				console.log(newtable)
 				console.log(this)
-
 			},
 			//弹窗里面的确认按钮---------------------
 			updateok(index, row) {
@@ -311,8 +308,18 @@
 	.el-dialog__body {
 		padding-bottom: 10px !important;
 	}
+	#player{
+		width: 500px;
+		height: 300px;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform:  translate(-50%,-50%);
+		 z-index: 99; 
+	}
 </style>
 <style scoped>
+
 	.title_header {
 		background-color: #fff;
 		margin-bottom: 10px;
@@ -325,29 +332,11 @@
 		height: auto;
 		background-color: white;
 	}
-	.open{
-		width: 700px;
-		height: 400px;
-		border: 1px solid;
-		background-color: white;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%,-50%);
-		z-index: 99;
-	}
+
 	.x{
-		position: absolute;
-		top: 10px;
-		left: 640px;
-	}
-	.mask{
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, .8);
+		position: fixed;
+		top: 20%;
+		left:70%;
 		z-index: 99;
 	}
 </style>

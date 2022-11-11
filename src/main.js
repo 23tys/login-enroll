@@ -7,9 +7,10 @@ import "normalize.css"  /* npm install normalize.css */
 import axios from '@/axios';  /* npm install axios */
 import Cookie from 'js-cookie';  /* npm install js-cookie -S */
 import store from '@/store'
-import VueDplayer from 'vue-dplayer';/* npm install dplayer -S */
-import 'vue-dplayer/dist/vue-dplayer.css'
-Vue.use(VueDplayer)
+// import dplayer from '@/dplayer'
+// import VueDplayer from 'vue-dplayer';/* npm install dplayer -S */
+// import 'vue-dplayer/dist/vue-dplayer.css'
+// Vue.use(VueDplayer)
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);    //vue use原理

@@ -1,9 +1,7 @@
 import VueX from "vuex";
 import Vue from 'vue';
 import axios from '@/axios';
-import {
-	url
-} from '@/axios';
+import {url} from '@/axios';
 
 Vue.use(VueX);
 
